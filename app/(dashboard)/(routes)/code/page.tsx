@@ -5,9 +5,10 @@ import axios from "axios";
 import { Code } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { useState } from "react";
+import ReactMarkdown from "react-markdown";
 import { useRouter } from "next/navigation";
 import { ChatCompletionRequestMessage } from "openai";
-import ReactMarkdown from "react-markdown";
+
 import { BotAvatar } from "@/components/bot-avatar";
 import Heading from "@/components/heading";
 import { Button } from "@/components/ui/button";
@@ -22,6 +23,7 @@ import { Empty } from "@/components/ui/empty";
 import { formSchema } from "./constants";
 
 const CodePage = () => {
+  const router = useRouter();
   const [messages, setMessages] = useState<ChatCompletionRequestMessage[]>([]);
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -41,16 +43,14 @@ const CodePage = () => {
       };
       const newMessages = [...messages, userMessage];
 
-      const response = await axios.post("./api/code", {
-        messages: newMessages,
-      });
-      console.log(response.data);
+      const response = await axios.post("/api/code", { messages: newMessages });
       setMessages((current) => [...current, userMessage, response.data]);
 
       form.reset();
     } catch (error: any) {
-      console.log(messages);
+      console.log(error);
     } finally {
+      router.refresh();
     }
   };
 
@@ -131,7 +131,9 @@ const CodePage = () => {
                 <ReactMarkdown
                   components={{
                     pre: ({ node, ...props }) => (
-                      <div className="overflow-auto w-full my-2 bg-black/10 p-2 rounded-lg"></div>
+                      <div className="overflow-auto w-full my-2 bg-black/10 p-2 rounded-lg">
+                        <pre {...props} />
+                      </div>
                     ),
                     code: ({ node, ...props }) => (
                       <code className="bg-black/10 rounded-lg p-1" {...props} />
