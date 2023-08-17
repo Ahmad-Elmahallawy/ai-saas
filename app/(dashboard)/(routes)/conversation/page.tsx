@@ -22,6 +22,7 @@ import { Empty } from "@/components/ui/empty";
 import { formSchema } from "./constants";
 
 const Conversation = () => {
+  const router = useRouter();
   const [messages, setMessages] = useState<ChatCompletionRequestMessage[]>([]);
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -51,6 +52,7 @@ const Conversation = () => {
     } catch (error: any) {
       console.log(messages);
     } finally {
+      router.refresh();
     }
   };
 
