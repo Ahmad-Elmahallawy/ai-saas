@@ -1,9 +1,9 @@
 import { auth, currentUser } from "@clerk/nextjs";
 import { NextResponse } from "next/server";
+
 import prismadb from "@/lib/prismadb";
 import { stripe } from "@/lib/stripe";
 import { absoluteUrl } from "@/lib/utils";
-import { log } from "console";
 
 const settingsUrl = absoluteUrl("/settings");
 
@@ -13,7 +13,7 @@ export async function GET() {
     const user = await currentUser();
 
     if (!userId || !user) {
-      return new NextResponse("unauthorized", { status: 401 });
+      return new NextResponse("Unauthorized", { status: 401 });
     }
 
     const userSubscription = await prismadb.userSubscription.findUnique({
